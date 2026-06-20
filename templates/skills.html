@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Skills | {{ profile.name }}{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    <h1 class="section-title">Skills &amp; Certifications</h1>
+
+    <div class="skills-grid">
+        {% for category, items in skills.items() %}
+        <div class="skill-card">
+            <h3>{{ category }}</h3>
+            <ul>
+                {% for item in items %}
+                <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

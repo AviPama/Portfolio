@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}About | {{ profile.name }}{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    <h1 class="section-title">About Me</h1>
+    <p class="section-text">{{ profile.bio }}</p>
+
+    <h2 class="subsection-title">Education</h2>
+    <div class="timeline">
+        {% for edu in education %}
+        <div class="timeline-item">
+            <h3>{{ edu.degree }}</h3>
+            <p class="timeline-org">{{ edu.school }}</p>
+            <p class="timeline-years">{{ edu.years }} &middot; {{ edu.details }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

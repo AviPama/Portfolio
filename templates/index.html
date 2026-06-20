@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}{{ profile.name }} | Home{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-image">
+        <!-- Replace this placeholder with your own photo at static/images/profile.jpg -->
+        <img src="{{ url_for('static', filename='images/profile.jpg') }}" alt="{{ profile.name }}" onerror="this.src='https://via.placeholder.com/280x280?text=Photo'">
+    </div>
+
+    <div class="hero-text">
+        <p class="hero-greeting">Hi, I'm</p>
+        <h1 class="hero-name">{{ profile.name }}</h1>
+        <h2 class="hero-title">{{ profile.title }}</h2>
+        <p class="hero-bio">{{ profile.bio }}</p>
+
+        <div class="hero-buttons">
+            <a href="{{ url_for('projects') }}" class="btn btn-primary">View Projects</a>
+            <a href="{{ url_for('static', filename=profile.resume_file) }}" class="btn btn-secondary" download>Download Resume</a>
+        </div>
+
+        <div class="hero-socials">
+            <a href="{{ profile.github }}" target="_blank" rel="noopener" aria-label="GitHub">GitHub</a>
+            <a href="{{ profile.linkedin }}" target="_blank" rel="noopener" aria-label="LinkedIn">LinkedIn</a>
+            <a href="mailto:{{ profile.email }}" aria-label="Email">Email</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

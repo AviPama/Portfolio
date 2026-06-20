@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Experience | {{ profile.name }}{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    <h1 class="section-title">Experience</h1>
+
+    <div class="timeline">
+        {% for job in experience %}
+        <div class="timeline-item">
+            <h3>{{ job.role }}</h3>
+            <p class="timeline-org">{{ job.org }}</p>
+            <p class="timeline-years">{{ job.years }}</p>
+            <ul>
+                {% for point in job.points %}
+                <li>{{ point }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

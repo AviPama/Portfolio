@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Projects | {{ profile.name }}{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    <h1 class="section-title">Projects</h1>
+
+    <div class="projects-grid">
+        {% for project in projects %}
+        <div class="project-card">
+            <h3>{{ project.title }}</h3>
+            <p class="project-meta">{{ project.tech }} &middot; {{ project.year }}</p>
+            <p class="project-description">{{ project.description }}</p>
+            <a href="{{ project.github }}" target="_blank" rel="noopener" class="btn btn-small">View on GitHub</a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
