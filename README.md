@@ -61,40 +61,13 @@ Visit **http://127.0.0.1:5000** in your browser.
 Drop a photo named `profile.jpg` into `static/images/`. If it's missing,
 the homepage will show a placeholder image instead of breaking.
 
-Your resume PDF is already placed at:
-`static/files/Avneet_Kaur_Pama_Resume_2026.pdf`
-(linked from the "Download Resume" button on the homepage).
 
-## 5. (Optional) Enable email notifications on contact form
+## 5. Email notifications on contact form
 
 By default, contact form messages are saved to the database only.
-To also get an email notification:
 
-1. In Gmail, create an **App Password** (Google Account → Security → App Passwords).
-2. Set environment variables before running the app:
-   ```bash
-   export MAIL_USERNAME="your_email@gmail.com"
-   export MAIL_PASSWORD="your_app_password"
-   ```
-3. In `app.py`, uncomment this line inside the `/contact` route:
-   ```python
-   # send_email_notification(name, email, message)
    ```
 
-## 6. Production deployment
-
-**Option A — waitress (simple WSGI server):**
-```bash
-waitress-serve --port=8080 wsgi:app
-```
-
-**Option B — Docker:**
-```bash
-docker build -t avneet-portfolio .
-docker run -d -p 8080:8080 avneet-portfolio
-```
-
-Then visit **http://localhost:8080**.
 
 ## Notes for beginners
 - Every route in `app.py` is documented with comments explaining what it does.
