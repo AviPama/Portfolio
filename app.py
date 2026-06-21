@@ -1,54 +1,21 @@
-"""
-app.py
-------
-Main Flask application file.
-
-This file:
-1. Creates and configures the Flask app
-2. Sets up a SQLite database (via Flask-SQLAlchemy) to store contact form messages
-3. Defines all the page routes (Home, About, Skills, Projects, Experience, Contact)
-4. Handles the contact form submission (validates input, saves to DB)
-
-Beginner note: Flask works by mapping "routes" (URLs) to Python functions.
-When a browser visits a URL, Flask runs the matching function and returns
-whatever that function gives back (usually rendered HTML).
-"""
-
 from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from datetime import datetime
 import os
 
-# ----------------------------------------------------------------------
-# 1. APP CONFIGURATION
-# ----------------------------------------------------------------------
 app = Flask(__name__)
 
-# Secret key is required by Flask to securely sign session cookies and
-# flash messages (the little "success!" / "error!" banners).
-# In production, set this via an environment variable instead of hardcoding it.
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-secret-key-change-me")
 
-# Configure SQLite database. The file "portfolio.db" will be created
-# automatically inside the project folder the first time you run migrations.
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(basedir, "portfolio.db")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-# Initialize the database and migration engine
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-
-# ----------------------------------------------------------------------
-# 2. DATABASE MODEL
-# ----------------------------------------------------------------------
 class ContactMessage(db.Model):
-    """
-    Represents a single contact form submission.
-    Each attribute below becomes a column in the 'contact_message' table.
-    """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), nullable=False)
@@ -57,14 +24,6 @@ class ContactMessage(db.Model):
 
     def __repr__(self):
         return f"<ContactMessage {self.name} - {self.email}>"
-
-
-# ----------------------------------------------------------------------
-# 3. STATIC PORTFOLIO DATA
-# ----------------------------------------------------------------------
-# In a larger app this might live in the database or a separate config file,
-# but for a personal portfolio, plain Python dictionaries/lists are simple
-# and easy to edit.
 
 PROFILE = {
     "name": "Avneet Pama",
@@ -208,11 +167,6 @@ PROJECTS = [
     },
 ]
 
-
-# ----------------------------------------------------------------------
-# 4. ROUTES
-# ----------------------------------------------------------------------
-
 @app.route("/")
 def home():
     """Home page: hero section with name, title, bio, and quick links."""
@@ -245,19 +199,11 @@ def projects():
 
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
-    """
-    Contact page.
-
-    GET  -> just show the empty contact form
-    POST -> validate the submitted form, save it to the database,
-            then redirect back to the contact page with a success/error message.
-    """
     if request.method == "POST":
         name = request.form.get("name", "").strip()
         email = request.form.get("email", "").strip()
         message = request.form.get("message", "").strip()
 
-        # --- Basic server-side validation ---
         if not name or not email or not message:
             flash("Please fill in all fields before submitting.", "error")
             return redirect(url_for("contact"))
@@ -266,56 +212,14 @@ def contact():
             flash("Please enter a valid email address.", "error")
             return redirect(url_for("contact"))
 
-        # --- Save to database ---
         new_message = ContactMessage(name=name, email=email, message=message)
         db.session.add(new_message)
         db.session.commit()
-
-        # --- Optional: send yourself an email notification ---
-        # Uncomment and configure the function below once you've set up
-        # an app password for your email account. See README for instructions.
-        # send_email_notification(name, email, message)
 
         flash("Thanks for reaching out! Your message has been received.", "success")
         return redirect(url_for("contact"))
 
     return render_template("contact.html", profile=PROFILE)
 
-
-# ----------------------------------------------------------------------
-# 5. OPTIONAL: EMAIL NOTIFICATION (using Python's built-in smtplib)
-# ----------------------------------------------------------------------
-def send_email_notification(name, email, message):
-    """
-    Sends an email to yourself whenever someone submits the contact form.
-    Disabled by default — uncomment the call in the /contact route above
-    to enable it, and fill in your own email credentials via environment
-    variables (never hardcode passwords in code!).
-    """
-    import smtplib
-    from email.message import EmailMessage
-
-    sender_email = os.environ.get("MAIL_USERNAME")
-    sender_password = os.environ.get("MAIL_PASSWORD")
-    receiver_email = PROFILE["email"]
-
-    if not sender_email or not sender_password:
-        # Email isn't configured — silently skip instead of crashing the app.
-        return
-
-    msg = EmailMessage()
-    msg["Subject"] = f"New portfolio contact from {name}"
-    msg["From"] = sender_email
-    msg["To"] = receiver_email
-    msg.set_content(f"Name: {name}\nEmail: {email}\n\nMessage:\n{message}")
-
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
-        smtp.login(sender_email, sender_password)
-        smtp.send_message(msg)
-
-
-# ----------------------------------------------------------------------
-# 6. ENTRY POINT (for local development only — production uses wsgi.py)
-# ----------------------------------------------------------------------
 if __name__ == "__main__":
     app.run(debug=True)
